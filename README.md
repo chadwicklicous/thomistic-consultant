@@ -24,7 +24,7 @@ commands. Just:
 
 1. Install the skill:
    ```bash
-   hermes skills install chadwicklicous/thomistic-consultant
+   hermes skills install https://raw.githubusercontent.com/chadwicklicous/thomistic-consultant/main/SKILL.md
    ```
    (or copy this repo's `SKILL.md` + `scripts/` into your agent's skills folder)
 2. Say: *"Set up the Thomistic consultant."*
@@ -91,7 +91,7 @@ This repository **is** a Hermes skill — `SKILL.md` at the root, with the
 pipeline scripts bundled in `scripts/`. Install it with:
 
 ```bash
-hermes skills install chadwicklicous/thomistic-consultant
+hermes skills install https://raw.githubusercontent.com/chadwicklicous/thomistic-consultant/main/SKILL.md
 ```
 
 The skill's **Setup** section tells the agent to run the full pipeline

@@ -14,7 +14,7 @@ The tool is designed for people who use **Hermes Agent** — an AI assistant. Yo
 
 1. **Install the skill.** In Hermes, run:
    ```
-   hermes skills install chadwicklicous/thomistic-consultant
+   hermes skills install https://raw.githubusercontent.com/chadwicklicous/thomistic-consultant/main/SKILL.md
    ```
 
 2. **Ask it to set up.** Say to Hermes:
