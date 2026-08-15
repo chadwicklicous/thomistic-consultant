@@ -45,7 +45,7 @@ The pipeline is standalone Python. See the Quick start below.
 ## Requirements
 
 - **Python 3.9+** (stdlib only for the pipeline; `chromadb` for the index)
-- **ChromaDB** — the vector database. Installed via `pip install "chromadb>=0.4.0"` (in `requirements.txt`). No separate server needed; it runs embedded.
+- **ChromaDB** — the vector database. Installed via `pip install "chromadb==1.5.9"` (in `requirements.txt`). No separate server needed; it runs embedded.
 - **Ollama** — the embedding provider (free, local, no API key). Pull the
   `nomic-embed-text` model with `ollama pull nomic-embed-text`.
 - **Hermes Agent** (optional) — to use the bundled `thomistic-consultant` skill
@@ -64,7 +64,7 @@ The pipeline is standalone Python. See the Quick start below.
 
 ```bash
 # 1. Install dependencies
-pip install "chromadb>=0.4.0"
+pip install "chromadb==1.5.9"
 
 # 2. Pull the embedding model
 ollama pull nomic-embed-text

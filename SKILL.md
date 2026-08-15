@@ -36,7 +36,7 @@ everything from there — no separate clone or download is needed.
 
 1. **Install dependencies** (pinned version):
    ```bash
-   pip install "chromadb>=0.4.0"
+   pip install "chromadb==1.5.9"
    ```
 
 2. **Set up the embedding provider** — Ollama (free, local, no API key):
