@@ -45,21 +45,18 @@ The pipeline is standalone Python. See the Quick start below.
 ## Requirements
 
 - **Python 3.9+** (stdlib only for the pipeline; `chromadb` for the index)
-- **ChromaDB** — the vector database. Installed via `pip install chromadb` (in `requirements.txt`). No separate server needed; it runs embedded.
-- **An embedding provider** — one of:
-  - **Ollama** (free, local) with the `nomic-embed-text` model, or
-  - **OpenAI** (or any OpenAI-compatible endpoint) with an embedding model
+- **ChromaDB** — the vector database. Installed via `pip install "chromadb>=0.4.0"` (in `requirements.txt`). No separate server needed; it runs embedded.
+- **Ollama** — the embedding provider (free, local, no API key). Pull the
+  `nomic-embed-text` model with `ollama pull nomic-embed-text`.
 - **Hermes Agent** (optional) — to use the bundled `thomistic-consultant` skill
   that documents the query-and-answer workflow. The pipeline itself is
   standalone Python and works without Hermes.
 
 ### What is NOT required
 
-- **Obsidian is not required.** The tool is pure Python + ChromaDB + an
-  embedding provider. It does not download or depend on Obsidian, or any other
-  note-taking app.
-- **No API keys** are required if you use Ollama (free and local). An API key
-  is only needed if you choose the OpenAI embedding provider.
+- **Obsidian is not required.** The tool is pure Python + ChromaDB + Ollama.
+  It does not download or depend on Obsidian, or any other note-taking app.
+- **No API keys** — Ollama is free and runs entirely on your machine.
 - **No database server** — ChromaDB runs embedded, storing its index in a local
   directory.
 
@@ -67,9 +64,9 @@ The pipeline is standalone Python. See the Quick start below.
 
 ```bash
 # 1. Install dependencies
-pip install chromadb
+pip install "chromadb>=0.4.0"
 
-# 2. (Ollama users) pull the embedding model
+# 2. Pull the embedding model
 ollama pull nomic-embed-text
 
 # 3. Build the corpus (downloads ~656 pages, extracts text)
@@ -87,26 +84,6 @@ python ct_index.py --query "utrum veritas sit in intellectu" --k 5
 
 The index build takes a few hours on CPU (it embeds 93k paragraphs). It is
 **resumable** — re-run `ct_index.py` and it continues from where it stopped.
-
-## Configuration
-
-All via environment variables (optional):
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `EMBED_PROVIDER` | `ollama` | `ollama` or `openai` |
-| `OLLAMA_URL` | `http://localhost:11434` | Ollama server |
-| `EMBED_MODEL` | `nomic-embed-text` (ollama) / `text-embedding-3-small` (openai) | Embedding model |
-| `OPENAI_API_KEY` | — | Required if `EMBED_PROVIDER=openai` |
-| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | For OpenAI-compatible endpoints |
-
-Example (OpenAI):
-
-```bash
-export EMBED_PROVIDER=openai
-export OPENAI_API_KEY=sk-...
-python ct_index.py
-```
 
 ## Using with Hermes Agent
 

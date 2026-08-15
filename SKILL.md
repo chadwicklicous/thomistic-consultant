@@ -34,21 +34,15 @@ The pipeline scripts are bundled in this skill's `scripts/` directory:
 Resolve the skill's directory (the directory containing this `SKILL.md`) and run
 everything from there — no separate clone or download is needed.
 
-1. **Install dependencies:**
+1. **Install dependencies** (pinned version):
    ```bash
-   pip install chromadb
+   pip install "chromadb>=0.4.0"
    ```
 
-2. **Set up the embedding provider** (pick one, in order of preference):
-   - **Ollama** (free, local, recommended — no API key):
-     ```bash
-     ollama pull nomic-embed-text
-     ```
-   - **OpenAI** (only if the user has an API key):
-     ```bash
-     export EMBED_PROVIDER=openai
-     export OPENAI_API_KEY=sk-...
-     ```
+2. **Set up the embedding provider** — Ollama (free, local, no API key):
+   ```bash
+   ollama pull nomic-embed-text
+   ```
 
 3. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
    paragraphs. It takes a few hours on CPU and is **resumable** — if it is

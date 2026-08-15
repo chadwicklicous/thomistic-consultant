@@ -2,15 +2,8 @@
 """Build a ChromaDB vector index of the Thomistic corpus for semantic search.
 
 Each paragraph (citation + Latin text) becomes a document. Embeddings come from
-a configurable provider (default: Ollama's nomic-embed-text, 768-dim). The index
-lives in thomistic/chroma/ and supports citation-grounded retrieval.
-
-Configuration (environment variables, all optional):
-  EMBED_PROVIDER   'ollama' (default) or 'openai'
-  OLLAMA_URL       default http://localhost:11434
-  EMBED_MODEL      default nomic-embed-text (ollama) or text-embedding-3-small (openai)
-  OPENAI_API_KEY   required only if EMBED_PROVIDER=openai
-  OPENAI_BASE_URL  optional, for OpenAI-compatible endpoints
+Ollama's nomic-embed-text (768-dim, free and local). The index lives in
+thomistic/chroma/ and supports citation-grounded retrieval.
 
 Usage:
   python ct_index.py            # build/refresh the index
@@ -23,43 +16,24 @@ TXT = os.path.join(BASE, 'thomistic', 'text')
 CHROMA_DIR = os.path.join(BASE, 'thomistic', 'chroma')
 COLLECTION = 'thomistic_corpus'
 
-PROVIDER = os.environ.get('EMBED_PROVIDER', 'ollama')
-OLLAMA_URL = os.environ.get('OLLAMA_URL', 'http://localhost:11434')
-EMBED_MODEL = os.environ.get('EMBED_MODEL',
-    'nomic-embed-text' if PROVIDER == 'ollama' else 'text-embedding-3-small')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
-OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', 'https://api.openai.com/v1')
-
-
-def embed_ollama(texts):
-    req = urllib.request.Request(
-        f'{OLLAMA_URL}/api/embed',
-        data=json.dumps({'model': EMBED_MODEL, 'input': texts}).encode(),
-        headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        d = json.loads(r.read())
-    return d['embeddings']
-
-
-def embed_openai(texts):
-    req = urllib.request.Request(
-        f'{OPENAI_BASE_URL}/embeddings',
-        data=json.dumps({'model': EMBED_MODEL, 'input': texts}).encode(),
-        headers={'Content-Type': 'application/json',
-                 'Authorization': f'Bearer {OPENAI_API_KEY}'})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        d = json.loads(r.read())
-    return [item['embedding'] for item in d['data']]
+OLLAMA_URL = 'http://localhost:11434'
+EMBED_MODEL = 'nomic-embed-text'
 
 
 def embed(texts):
-    """Embed a list of texts. Robust: retries on transient errors; on a batch
-    400, falls back to per-item embedding so one bad paragraph can't kill the run."""
+    """Embed a list of texts via Ollama. Robust: retries on transient errors;
+    on a batch 400, falls back to per-item embedding so one bad paragraph
+    can't kill the whole run."""
     texts = [t[:6000] for t in texts]  # truncate very long paragraphs
-    fn = embed_ollama if PROVIDER == 'ollama' else embed_openai
     for attempt in range(3):
         try:
-            return fn(texts)
+            req = urllib.request.Request(
+                f'{OLLAMA_URL}/api/embed',
+                data=json.dumps({'model': EMBED_MODEL, 'input': texts}).encode(),
+                headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req, timeout=120) as r:
+                d = json.loads(r.read())
+            return d['embeddings']
         except urllib.error.HTTPError as e:
             if e.code == 400 and len(texts) > 1:
                 mid = len(texts) // 2
@@ -97,7 +71,7 @@ def main():
         metadata={'hnsw:space': 'cosine'})
 
     paras = load_paragraphs()
-    print(f"Loaded {len(paras)} paragraphs (provider={PROVIDER}, model={EMBED_MODEL})")
+    print(f"Loaded {len(paras)} paragraphs (model={EMBED_MODEL})")
 
     existing = col.count()
     print(f"Already indexed: {existing}")
