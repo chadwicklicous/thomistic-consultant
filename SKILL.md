@@ -25,9 +25,14 @@ Answer questions about St. Thomas Aquinas' philosophy and theology **from the or
 
 When the user first asks to use the Thomistic consultant, **the agent performs this setup autonomously**. The user should not have to run any of these commands themselves.
 
-The scripts are bundled in this skill's `scripts/` directory. Resolve the skill's
-directory (the directory containing this `SKILL.md`) and run everything from
-there — no separate clone or download is needed.
+The pipeline scripts are bundled in this skill's `scripts/` directory:
+[`scripts/ct_parse_index.py`](scripts/ct_parse_index.py),
+[`scripts/ct_download.py`](scripts/ct_download.py),
+[`scripts/ct_extract.py`](scripts/ct_extract.py), and
+[`scripts/ct_index.py`](scripts/ct_index.py).
+
+Resolve the skill's directory (the directory containing this `SKILL.md`) and run
+everything from there — no separate clone or download is needed.
 
 1. **Install dependencies:**
    ```bash
@@ -47,7 +52,7 @@ there — no separate clone or download is needed.
 
 3. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
    paragraphs. It takes a few hours on CPU and is **resumable** — if it is
-   interrupted, re-run `ct_index.py` and it continues from where it stopped.
+   interrupted, re-run `scripts/ct_index.py` and it continues from where it stopped.
    ```bash
    cd <skill-dir>/scripts
    python ct_parse_index.py     # map all work pages → URLs
