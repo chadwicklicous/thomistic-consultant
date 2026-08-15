@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+*.pyc
+thomistic/raw/
+thomistic/text/
+thomistic/chroma/
+iopera.html
+ct_manifest.json
+.env
