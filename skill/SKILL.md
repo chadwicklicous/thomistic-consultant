@@ -21,19 +21,26 @@ Answer questions about St. Thomas Aquinas' philosophy and theology **from the or
 - User wants a passage located, a doctrine explained *secundum mentem Thomae*, or a citation verified
 - User is writing/studying and needs the original Latin with a precise reference
 
-## The Corpus (already built)
+## Prerequisites
 
-- **Text corpus:** `C:\Users\philo\deep-research\thomistic\text\` — 656 TSV files, 93,189 paragraphs, each `CITATION\tTEXT`
-- **Vector index:** `C:\Users\philo\deep-research\thomistic\chroma\` — ChromaDB collection `thomistic_corpus`, nomic-embed-text (768-dim)
-- **Critical edition PDFs:** `C:\Users\philo\Library\Philosophy\Aquinas\EditioLeonina\` (22 vols) — for apparatus cross-reference
-- **Obsidian index:** `What Animates Man/Thomistic Corpus/Index.md`
+The tool requires:
+
+- **Python 3.9+** and **ChromaDB** (`pip install chromadb`)
+- **An embedding provider** — either **Ollama** (free, local) with the `nomic-embed-text` model, or **OpenAI** (or any OpenAI-compatible endpoint). See the README for configuration.
+
+The corpus and index are built by the scripts in this package (see the README's Quick Start). They are **not** bundled — they are downloaded and built locally on first run.
+
+## The Corpus (after building)
+
+- **Text corpus:** `<package>/thomistic/text/` — 656 TSV files, 93,189 paragraphs, each `CITATION\tTEXT`
+- **Vector index:** `<package>/thomistic/chroma/` — ChromaDB collection `thomistic_corpus`
 
 ## Query Workflow
 
 ### 1. Semantic retrieval
 
 ```bash
-cd /c/Users/philo/deep-research
+cd <package>/scripts
 python ct_index.py --query "<your question in Latin or English>" --k 5
 ```
 
@@ -44,7 +51,7 @@ This embeds the question and returns the top-k paragraphs with exact citations. 
 The query returns the passage text. Read it carefully. If you need the full paragraph (the query truncates to 300 chars), grep the TSV:
 
 ```bash
-grep -F "De veritate, q. 1 a. 2 co." /c/Users/philo/deep-research/thomistic/text/qdv01.tsv
+grep -F "De veritate, q. 1 a. 2 co." <package>/thomistic/text/qdv01.tsv
 ```
 
 ### 3. Answer from the source
@@ -52,7 +59,6 @@ grep -F "De veritate, q. 1 a. 2 co." /c/Users/philo/deep-research/thomistic/text
 - Quote the **original Latin** passage.
 - Give the **exact citation** (e.g. `ST I q. 2 a. 3 co.`).
 - Explain the doctrine in the user's language, but anchor every claim in the quoted text.
-- If the user wants the critical apparatus, point to the corresponding Leonina PDF volume.
 
 ## Citation format reference
 
@@ -74,16 +80,10 @@ grep -F "De veritate, q. 1 a. 2 co." /c/Users/philo/deep-research/thomistic/text
 - **The index build is resumable.** If `ct_index.py` dies partway (e.g. Ollama hiccup), just re-run it — it resumes from the last indexed count. The embed function retries and isolates bad paragraphs.
 - **Ollama must be running** for embeddings (`ollama serve`). Model: `nomic-embed-text`.
 - **Long paragraphs** are truncated to 6000 chars before embedding (nomic-embed context limit).
-- **Windows paths:** use `C:\Users\philo\...` or `/c/Users/philo/...` in bash, not `$HOME`.
-- **The 11 Gallica-restricted Leonina volumes** (t.22, 24, 26, 28, 40, 41, 42, 43, 45) are NOT in the PDF library, but their full text IS in the Corpus Thomisticum corpus — so the consultant covers them.
+- **The 11 Gallica-restricted Leonina volumes** (t.22, 24, 26, 28, 40, 41, 42, 43, 45) are not publicly downloadable as PDFs, but their full text IS in the Corpus Thomisticum corpus — so the consultant covers them.
 
 ## Verification
 
 1. Run a query and confirm it returns passages with valid citations.
 2. Grep the TSV to confirm the full paragraph text matches the citation.
 3. Answer a test question and confirm every claim is anchored in a quoted Latin passage.
-
-## Related
-
-- `obsidian` — the vault where the corpus index lives
-- `research-library-organization` — the library structure (Leonina PDFs)

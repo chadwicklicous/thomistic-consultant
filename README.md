@@ -18,12 +18,23 @@ general recollection.
 ## Requirements
 
 - **Python 3.9+** (stdlib only for the pipeline; `chromadb` for the index)
-- **An embedding provider** — either:
+- **ChromaDB** — the vector database. Installed via `pip install chromadb` (in `requirements.txt`). No separate server needed; it runs embedded.
+- **An embedding provider** — one of:
   - **Ollama** (free, local) with the `nomic-embed-text` model, or
   - **OpenAI** (or any OpenAI-compatible endpoint) with an embedding model
 - **Hermes Agent** (optional) — to use the bundled `thomistic-consultant` skill
   that documents the query-and-answer workflow. The pipeline itself is
   standalone Python and works without Hermes.
+
+### What is NOT required
+
+- **Obsidian is not required.** The tool is pure Python + ChromaDB + an
+  embedding provider. It does not download or depend on Obsidian, or any other
+  note-taking app.
+- **No API keys** are required if you use Ollama (free and local). An API key
+  is only needed if you choose the OpenAI embedding provider.
+- **No database server** — ChromaDB runs embedded, storing its index in a local
+  directory.
 
 ## Quick start
 
