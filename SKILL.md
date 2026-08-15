@@ -25,18 +25,16 @@ Answer questions about St. Thomas Aquinas' philosophy and theology **from the or
 
 When the user first asks to use the Thomistic consultant, **the agent performs this setup autonomously**. The user should not have to run any of these commands themselves.
 
-1. **Get the scripts.** Clone the repository:
-   ```bash
-   git clone https://github.com/chadwicklicous/thomistic-consultant.git
-   cd thomistic-consultant/scripts
-   ```
+The scripts are bundled in this skill's `scripts/` directory. Resolve the skill's
+directory (the directory containing this `SKILL.md`) and run everything from
+there — no separate clone or download is needed.
 
-2. **Install dependencies:**
+1. **Install dependencies:**
    ```bash
    pip install chromadb
    ```
 
-3. **Set up the embedding provider** (pick one, in order of preference):
+2. **Set up the embedding provider** (pick one, in order of preference):
    - **Ollama** (free, local, recommended — no API key):
      ```bash
      ollama pull nomic-embed-text
@@ -47,17 +45,18 @@ When the user first asks to use the Thomistic consultant, **the agent performs t
      export OPENAI_API_KEY=sk-...
      ```
 
-4. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
+3. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
    paragraphs. It takes a few hours on CPU and is **resumable** — if it is
    interrupted, re-run `ct_index.py` and it continues from where it stopped.
    ```bash
+   cd <skill-dir>/scripts
    python ct_parse_index.py     # map all work pages → URLs
    python ct_download.py        # download the corpus
    python ct_extract.py         # extract citation-tagged text
    python ct_index.py           # build the vector index
    ```
 
-5. **Verify** the setup works:
+4. **Verify** the setup works:
    ```bash
    python ct_index.py --query "utrum Deus sit" --k 3
    ```
@@ -71,7 +70,7 @@ the relevant Latin passages with citations.
 ### 1. Semantic retrieval
 
 ```bash
-cd <repo>/scripts
+cd <skill-dir>/scripts
 python ct_index.py --query "<the user's question, in Latin or English>" --k 5
 ```
 
@@ -84,7 +83,7 @@ The query returns the passage text. Read it carefully. If you need the full
 paragraph (the query truncates to 300 chars), grep the TSV:
 
 ```bash
-grep -F "De veritate, q. 1 a. 2 co." <repo>/thomistic/text/qdv01.tsv
+grep -F "De veritate, q. 1 a. 2 co." <skill-dir>/scripts/thomistic/text/qdv01.tsv
 ```
 
 ### 3. Answer from the source

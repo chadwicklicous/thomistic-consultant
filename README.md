@@ -22,16 +22,21 @@ general recollection.
 If you use **Hermes Agent** (or a similar AI agent), you don't need to run any
 commands. Just:
 
-1. Install the `thomistic-consultant` skill (copy `skill/` into your agent's
-   skills folder).
+1. Install the skill:
+   ```bash
+   hermes skills install chadwicklicous/thomistic-consultant
+   ```
+   (or copy this repo's `SKILL.md` + `scripts/` into your agent's skills folder)
 2. Say: *"Set up the Thomistic consultant."*
 
 Your agent reads the skill, installs the dependencies, downloads the corpus,
 builds the index, and verifies it — all autonomously. Then you ask questions in
 plain English and it answers from the original Latin with exact citations.
 
-The skill's **Setup** section is written as instructions *for the agent to
-execute*, so the user never touches a terminal.
+The skill is **self-contained**: the scripts are bundled in the skill's own
+`scripts/` directory, so the agent runs everything from there — no separate
+clone or download. The skill's **Setup** section is written as instructions
+*for the agent to execute*, so the user never touches a terminal.
 
 ### For technical users: run it directly
 
@@ -105,13 +110,18 @@ python ct_index.py
 
 ## Using with Hermes Agent
 
-Copy the `skill/thomistic-consultant/` directory into your Hermes skills folder
-(`~/.hermes/skills/research/` or `~/AppData/Local/hermes/skills/research/` on
-Windows). The skill's **Setup** section tells the agent to run the full pipeline
-autonomously — the user just says "set up the Thomistic consultant" and then
-asks questions in plain English. The agent retrieves passages with
-`ct_index.py --query`, reads the full Latin, and answers from the source with
-exact citations.
+This repository **is** a Hermes skill — `SKILL.md` at the root, with the
+pipeline scripts bundled in `scripts/`. Install it with:
+
+```bash
+hermes skills install chadwicklicous/thomistic-consultant
+```
+
+The skill's **Setup** section tells the agent to run the full pipeline
+autonomously from the skill's own `scripts/` directory — the user just says
+"set up the Thomistic consultant" and then asks questions in plain English. The
+agent retrieves passages with `ct_index.py --query`, reads the full Latin, and
+answers from the source with exact citations.
 
 ## How it works
 
