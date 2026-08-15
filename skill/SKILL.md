@@ -21,37 +21,70 @@ Answer questions about St. Thomas Aquinas' philosophy and theology **from the or
 - User wants a passage located, a doctrine explained *secundum mentem Thomae*, or a citation verified
 - User is writing/studying and needs the original Latin with a precise reference
 
-## Prerequisites
+## Setup (one-time — the agent runs this, not the user)
 
-The tool requires:
+When the user first asks to use the Thomistic consultant, **the agent performs this setup autonomously**. The user should not have to run any of these commands themselves.
 
-- **Python 3.9+** and **ChromaDB** (`pip install chromadb`)
-- **An embedding provider** — either **Ollama** (free, local) with the `nomic-embed-text` model, or **OpenAI** (or any OpenAI-compatible endpoint). See the README for configuration.
+1. **Get the scripts.** Clone the repository:
+   ```bash
+   git clone https://github.com/chadwicklicous/thomistic-consultant.git
+   cd thomistic-consultant/scripts
+   ```
 
-The corpus and index are built by the scripts in this package (see the README's Quick Start). They are **not** bundled — they are downloaded and built locally on first run.
+2. **Install dependencies:**
+   ```bash
+   pip install chromadb
+   ```
 
-## The Corpus (after building)
+3. **Set up the embedding provider** (pick one, in order of preference):
+   - **Ollama** (free, local, recommended — no API key):
+     ```bash
+     ollama pull nomic-embed-text
+     ```
+   - **OpenAI** (only if the user has an API key):
+     ```bash
+     export EMBED_PROVIDER=openai
+     export OPENAI_API_KEY=sk-...
+     ```
 
-- **Text corpus:** `<package>/thomistic/text/` — 656 TSV files, 93,189 paragraphs, each `CITATION\tTEXT`
-- **Vector index:** `<package>/thomistic/chroma/` — ChromaDB collection `thomistic_corpus`
+4. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
+   paragraphs. It takes a few hours on CPU and is **resumable** — if it is
+   interrupted, re-run `ct_index.py` and it continues from where it stopped.
+   ```bash
+   python ct_parse_index.py     # map all work pages → URLs
+   python ct_download.py        # download the corpus
+   python ct_extract.py         # extract citation-tagged text
+   python ct_index.py           # build the vector index
+   ```
+
+5. **Verify** the setup works:
+   ```bash
+   python ct_index.py --query "utrum Deus sit" --k 3
+   ```
+   If it returns passages with citations, the consultant is ready.
+
+After setup, the user asks questions in natural language and the agent retrieves
+the relevant Latin passages with citations.
 
 ## Query Workflow
 
 ### 1. Semantic retrieval
 
 ```bash
-cd <package>/scripts
-python ct_index.py --query "<your question in Latin or English>" --k 5
+cd <repo>/scripts
+python ct_index.py --query "<the user's question, in Latin or English>" --k 5
 ```
 
-This embeds the question and returns the top-k paragraphs with exact citations. For a broader sweep, use `--k 10`.
+This embeds the question and returns the top-k paragraphs with exact citations.
+For a broader sweep, use `--k 10`.
 
 ### 2. Read the actual Latin
 
-The query returns the passage text. Read it carefully. If you need the full paragraph (the query truncates to 300 chars), grep the TSV:
+The query returns the passage text. Read it carefully. If you need the full
+paragraph (the query truncates to 300 chars), grep the TSV:
 
 ```bash
-grep -F "De veritate, q. 1 a. 2 co." <package>/thomistic/text/qdv01.tsv
+grep -F "De veritate, q. 1 a. 2 co." <repo>/thomistic/text/qdv01.tsv
 ```
 
 ### 3. Answer from the source
