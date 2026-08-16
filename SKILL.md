@@ -23,7 +23,7 @@ Answer questions about St. Thomas Aquinas' philosophy and theology **from the or
 
 ## Setup (one-time — the agent runs this, not the user)
 
-When the user first asks to use the Thomistic consultant, **the agent performs this setup autonomously**. The user should not have to run any of these commands themselves.
+When the user first asks to use the Thomistic consultant, **the agent performs this setup autonomously**. The user should not have to run any commands, install any programs, or understand any of this. The user just talks to the agent in plain English.
 
 The pipeline scripts are bundled in this skill's `scripts/` directory:
 [`scripts/ct_parse_index.py`](scripts/ct_parse_index.py),
@@ -34,17 +34,28 @@ The pipeline scripts are bundled in this skill's `scripts/` directory:
 Resolve the skill's directory (the directory containing this `SKILL.md`) and run
 everything from there — no separate clone or download is needed.
 
-1. **Install dependencies** (pinned version):
+1. **Install Python dependencies** (pinned version):
    ```bash
    pip install "chromadb==1.5.9"
    ```
 
-2. **Set up the embedding provider** — Ollama (free, local, no API key):
+2. **Install Ollama if it is not already present.** Check first:
+   ```bash
+   ollama --version
+   ```
+   If that fails, install it for the user's platform:
+   - **Windows:** download and run the installer from https://ollama.com/download/OllamaSetup.exe
+   - **macOS:** download and run https://ollama.com/download/Ollama-darwin.zip
+   - **Linux:** `curl -fsSL https://ollama.com/install.sh | sh`
+   Then start the Ollama service (on Windows/macOS the installer launches it; on
+   Linux run `ollama serve` in the background).
+
+3. **Pull the embedding model:**
    ```bash
    ollama pull nomic-embed-text
    ```
 
-3. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
+4. **Build the corpus and index.** This downloads ~656 pages and embeds 93,189
    paragraphs. It takes a few hours on CPU and is **resumable** — if it is
    interrupted, re-run `scripts/ct_index.py` and it continues from where it stopped.
    ```bash
@@ -55,7 +66,7 @@ everything from there — no separate clone or download is needed.
    python ct_index.py           # build the vector index
    ```
 
-4. **Verify** the setup works:
+5. **Verify** the setup works:
    ```bash
    python ct_index.py --query "utrum Deus sit" --k 3
    ```
